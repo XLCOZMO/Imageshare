@@ -1,8 +1,13 @@
 import { Template } from 'meteor/templating';
 import { ReactiveVar } from 'meteor/reactive-var';
-
+import { Session } from 'meteor/session';
+import { Accounts } from 'meteor/accounts-base';
 import './main.html';
 import '../lib/collection.js';
+
+Accounts.ui.config({
+  passwordSignupFields: 'USERNAME_ONLY',
+});
 
 Template.myJumbo.events({
 	'click .js-addImg'(event){
@@ -59,12 +64,14 @@ Template.mainBody.helpers({
 		var newResults = imagesDB.find({"createdOn":{$gte:prevTime}}).count();
 		if (newResults > 0) {
 			//if new images are found then sort by date first then ratings
-			return imagesDB.find({}, {sort:{createdOn:-1, imgRate:-1}});
+			return imagesDB.find({}, {sort:{createdOn:-1, imgRate:-1}, limit:Session.get('imgLimit')});
 		} else {
 			//else sort by ratings then date
-			return imagesDB.find({}, {sort:{imgRate:-1, createdOn:1}});
+			return imagesDB.find({}, {sort:{imgRate:-1, createdOn:1}, limit:Session.get('imgLimit')});
 		}
-		
+
+		// console.log(newResults,"new images",prevTime)
+		// return imagesDB.find({}, sort: {imgRate: -1, createdOn:1}, limit:Session.get('imgLimit')});
 	}
 });
 
@@ -99,5 +106,16 @@ Template.editImg.events({
 		var imgDesc = $("#eimgDesc").val();
 		imagesDB.update({_id:eId}, {$set:{"title":imgTitle, "path":imgPath, "desc":imgDesc}});
 		$('#editImgModal').modal("hide");
-	}
-});
+	 	}
+    });
+
+	lastScrollTop = 0;
+	$(window).scroll(function(event){
+		if($(window).scrollTop() + $(window).height() > $(document).height() - 100) {
+			var scrollTop = $(this).scrollTop();
+			if (scrollTop > lastScrollTop){
+				console.log("We have arrived at the bottom of the page");
+			}
+			lastScrollTop = scrollTop;
+		}
+	});

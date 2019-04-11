@@ -14,3 +14,6 @@ body {
 .allImages{
 	width: 100%;
 }
+.login-link-text{
+	color:white !important;
+}
