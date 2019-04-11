@@ -75,8 +75,12 @@
 									<p class="card-text"><h3>{{title}}</h3>{{desc}}</p>
 									<div class="d-flex justify-content-between align-items-center">
 										<div class="btn-group">
+											{{#if userloggedIn}}
 											<button type="button" class="btn btn-sm btn-outline-secondary">View</button>
+											{{/if}}
+											{{#if userloggedIn}}
 											<button type="button" class="btn btn-sm btn-outline-secondary js-editImage"><i class="zmdi zmdi-edit zmdi-hc-lg"></i></button>
+											{{/if}}
 										</div>
 										<small class="text-muted">{{imageAge}}</small>
 										<button type="button" class="js-deleteImg btn btn-sm btn-outline-secondary" data-container="body" data-toggle="popover" data-placement="top" data-content="Vivamus"><i class="zmdi zmdi-delete zmdi-hc-lg"></i></button>

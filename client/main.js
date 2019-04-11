@@ -73,6 +73,13 @@ Template.mainBody.helpers({
 		// console.log(newResults,"new images",prevTime)
 		// return imagesDB.find({}, sort: {imgRate: -1, createdOn:1}, limit:Session.get('imgLimit')});
 	}
+	userLoggedIn(){
+		if (meteor.user()){
+			return true;	
+		}else{
+			return false;
+		}
+	}
 });
 
 Template.mainBody.events({
