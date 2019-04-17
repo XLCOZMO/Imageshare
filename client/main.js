@@ -15,6 +15,9 @@ Template.myJumbo.events({
 	}
 });
 
+Session.set('imgLimit',3);
+Session.set('userfilter',false);
+
 Template.addImg.events({
 	'click .js-saveImg'(event){
 		var imgTitle = $("#imgTitle").val();
@@ -26,7 +29,7 @@ Template.addImg.events({
 		$("#imgDesc").val('');
 		$("#addImgPreview").attr('src','user-512.png');
 		$("#addImgModal").modal("hide");
-		imagesDB.insert({"title":imgTitle, "path":imgPath, "desc":imgDesc, "createdOn":new Date().getTime()});
+		imagesDB.insert({"title":imgTitle, "path":imgPath, "desc":imgDesc, "createdOn":new Date().getTime(),"postedBy":Meteor.user()._id});
 	},
 	'click .js-cancelAdd'(){
 		$("#imgTitle").val('');
@@ -59,6 +62,9 @@ Template.mainBody.helpers({
 		return imgCreatedOn + timeUnit;
 	},
 	allImages(){
+		if(Session.get("userfilter")== false){
+		
+
 		//Get time 15 seconds ago
 		var prevTime = new Date() - 15000;
 		var newResults = imagesDB.find({"createdOn":{$gte:prevTime}}).count();
@@ -67,19 +73,26 @@ Template.mainBody.helpers({
 			return imagesDB.find({}, {sort:{createdOn:-1, imgRate:-1}, limit:Session.get('imgLimit')});
 		} else {
 			//else sort by ratings then date
-			return imagesDB.find({}, {sort:{imgRate:-1, createdOn:1}, limit:Session.get('imgLimit')});
+			return imagesDB.find({}, {sort:{imgRate:-1, createdOn:1}, limit:Session.get('imgLimit')})	
 		}
+	}else{
+		return imagesDB.find({postedBy:Session.get("userfilter")}, {sort:{imgRate:-1, createdOn:1}, limit:Session.get('imgLimit')}) ;
+	}
 
 		// console.log(newResults,"new images",prevTime)
 		// return imagesDB.find({}, sort: {imgRate: -1, createdOn:1}, limit:Session.get('imgLimit')});
-	}
-	userLoggedIn(){
-		if (meteor.user()){
-			return true;	
-		}else{
-			return false;
-		}
-	}
+	},
+	 username(){
+	 	var uId = imagesDB.findOne({_id:this._id}).postedBy;
+	 	return Meteor.users.findOne({_id:uId}).username;
+	 },
+
+		 
+
+	userId(){
+		 return uId = imagesDB.findOne({_id:this._id}).postedBy;
+		},
+	 
 });
 
 Template.mainBody.events({
@@ -102,7 +115,11 @@ Template.mainBody.events({
 		var imgId = this.data_id;
 		var rating = $(event.currentTarget).data('userrating');
 		imagesDB.update({_id:imgId}, {$set:{'imgRate':rating}});
-	}
+	},
+	'click .js-showUser'(event){
+		event.preventDefault();
+		Session.set("userfilter",event.currentTarget.id);
+	} 
 });
 
 Template.editImg.events({

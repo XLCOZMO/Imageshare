@@ -54,7 +54,9 @@
 			<p class="lead text-muted">Glad you found your way here. It's always a good time to read a book. Find your passion amongst the stars by choosing from our many categories tailored just for you.</p>
 			<p>
 				<!-- <a href="#" class="btn btn-primary my-2">Top Rated Book</a> -->
+				{{#if currentUser}}
 				<a href="#" class="js-addImg btn btn-primary my-2">Add New Image</a>
+				{{/if}}
 			</p>
 		</div>
 	</section>
@@ -69,16 +71,22 @@
 					{{#each allImages}}
 						<div class="col-md-4" id="{{_id}}">
 							<div class="card mb-4 shadow-sm">
+								<div class="row">
+									<div class="col-8 offset-1">
+								<a href="" class="({userId})"><h5>@{{username}}</h5></a>
+									</div>
+								</div>
+								
 								<img class="allImages" src='{{path}}' alt="temp photo">
 								{{> starsRating class="js-rate" data_id=_id rating=imgRate size=32 mutable=true}}
 								<div class="card-body">
 									<p class="card-text"><h3>{{title}}</h3>{{desc}}</p>
 									<div class="d-flex justify-content-between align-items-center">
 										<div class="btn-group">
-											{{#if userloggedIn}}
+											{{#if currentUser}}
 											<button type="button" class="btn btn-sm btn-outline-secondary">View</button>
 											{{/if}}
-											{{#if userloggedIn}}
+											{{#if currentUser}}
 											<button type="button" class="btn btn-sm btn-outline-secondary js-editImage"><i class="zmdi zmdi-edit zmdi-hc-lg"></i></button>
 											{{/if}}
 										</div>
